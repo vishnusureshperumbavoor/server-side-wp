@@ -15,19 +15,19 @@ mongoose.connect("mongodb://localhost/gptcpbvr", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-const User = mongoose.model("User", {
-  name: String,
-  username: String,
-  password: String,
-});
+const userSchema = new mongoose.Schema({
+  name:String,
+  username:String,
+  password:String,
+})
+const User = mongoose.model('User',userSchema)
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
 app.post("/registration", urlencodedParser, (req, res) => {
-  const user = new User(req.body);
+  const user = new User(req.body)
   db.collection("user").insertOne(user,((err,coll)=>{
     if(err)
       console.log(`error ${err}`);
