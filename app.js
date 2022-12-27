@@ -4,38 +4,45 @@ const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const mongoose = require("mongoose");
 const db = mongoose.connection;
+const dotenv = require("dotenv")
+dotenv.config()
+const mongodb_uri = process.env.MONGODB_URI
+const PORT = process.env.PORT
+
 db.on("connected", () => {
   console.log("mongodb connection established");
 });
 db.on("error", (err) => {
-  console.log(`mongodb connection ${err}`);
+  console.log(`mongodb connection error`);
+  console.log(`${err}`);
 });
+mongoose.set("strictQuery", false);
 
-mongoose.connect("mongodb://localhost/gptcpbvr", {
+mongoose.connect(mongodb_uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 const userSchema = new mongoose.Schema({
-  name:String,
-  username:String,
-  password:String,
-})
-const User = mongoose.model('User',userSchema)
+  name: String,
+  username: String,
+  password: String,
+});
+
+const User = mongoose.model("User", userSchema);
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
 app.post("/registration", urlencodedParser, (req, res) => {
-  const user = new User(req.body)
-  db.collection("user").insertOne(user,((err,coll)=>{
-    if(err)
-      console.log(`error ${err}`);
-    else 
-      console.log(`inserted successfully ${coll}`);
-  }));
+  const user = new User(req.body);
+  db.collection("user").insertOne(user, (err, coll) => {
+    if (err) console.log(`error ${err}`);
+    else res.send(`inserted successfully ${coll}`);
+  });
 });
 
-app.listen(3000, () => {
-  console.log("Express server listening on port 3000");
+app.listen(PORT, () => {
+  console.log(`Express server listening on port ${PORT}`);
 });
