@@ -12,7 +12,11 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 
 app.use(
-  session({ secret: "keyboard cat", resave: false, saveUninitialized: true })
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+  })
 );
 
 app.use(cookieParser());
@@ -55,9 +59,8 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  if (req.session.user) {
-    res.render("home", { user: req.session.user });
-  } else res.redirect("/login");
+  if (req.session.user) res.render("home", { user: req.session.user });
+  else res.redirect("/login");
 });
 
 app.post("/registration", urlencodedParser, (req, res) => {
@@ -76,9 +79,7 @@ app.post("/login", urlencodedParser, (req, res) => {
     (err, user) => {
       if (err) return console.error(err);
       if (user && user.password === req.body.password) {
-        //res.cookie("session", "abc123", { expires: new Date(Date.now() + 30000) });
-        req.session.authenticated = true;
-        res.cookie("username", "user", {
+        res.cookie(user.username, "username", {
           expires: new Date(Date.now() + 900000),
           httpOnly: true,
         });
@@ -87,22 +88,23 @@ app.post("/login", urlencodedParser, (req, res) => {
         res.redirect("/");
       } else {
         console.log("Invalid username or password");
+        res.redirect('/login')
       }
     }
   );
 });
 
 app.post("/logout", (req, res) => {
+  res.clearCookie(req.session.user.username);
   req.session.destroy((err) => {
     if (err) {
       console.error(err);
       res.sendStatus(500);
     } else {
-      res.clearCookie("connect.sid");
+      //res.clearCookie("connect.sid");
       res.redirect("/login");
     }
   });
-  res.clearCookie("username");
 });
 
 app.listen(PORT, () => {
