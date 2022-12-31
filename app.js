@@ -48,6 +48,10 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
+app.get("/session", (req, res) => {
+  res.send(req.session.user)
+});
+
 app.get("/registration", (req, res) => {
   if (req.session.user) res.redirect("home", { user: req.session.user });
   else res.sendFile(__dirname + "/index.html");
@@ -101,7 +105,7 @@ app.post("/logout", (req, res) => {
       console.error(err);
       res.sendStatus(500);
     } else {
-      //res.clearCookie("connect.sid");
+      res.clearCookie("connect.sid");
       res.redirect("/login");
     }
   });
