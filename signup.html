@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Signup</title>
+  </head>
+  <body>
+    <h1>SIGNUP</h1>
+    <form method="POST" action="/signup" enctype="multipart/form-data">
+      <label>Name : </label>
+      <input type="text" name="name" /><br /><br />
+      <label>Username : </label>
+      <input type="text" name="username" /><br /><br />
+      <label>Password : </label>
+      <input type="password" name="password" /><br /><br />
+      <input type="file" name="aiimage" /><br /><br />
+      <input type="submit" value="Submit" /><br />
+    </form>
+    <form action="/login" method="GET">
+      <button>Go to Login page</button>
+    </form>
+  </body>
+</html>
